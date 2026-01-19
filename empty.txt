@@ -1,1 +1,41 @@
-.
+смотри, я видел https://github.com/rfmoz/grafana-dashboards.git Node exporter full. https://grafana.com/grafana/dashboards/1860-node-exporter-full/
+его можно взять как инфраструктурные метрики.
+его графики и метрики хорошие.
+так же можно сделать как в https://grafana.com/grafana/dashboards/19372-dashboard-monitoring-all-server-overview/.
+
+теперь определимся с сервисными метриками
+A) HTTP API
+Метрика	Зачем
+Requests per Second (RPS)	сколько запросов обрабатываются в секунду
+Error Rate (4xx/5xx)	сколько ошибок происходит (важно и 400 и 500 ошибки должны быть).
+Latency P95/P99	“плохие” задержки в системе
+Top N slowest paths	какие пути тормозят чаще всего
+Traffic by path	где сосредоточена нагрузка
+Requests by method	GET vs POST vs others
+я так понимаю это нужно в каждый микросервис внедрить. или только в gateway?
+
+Business-oriented HTTP KPIs
+эти метрики тоже нужные
+Successful logins/min	сколько логинов в минуту
+Friend requests / min	количество friend-request
+Messages created / min	сколько сообщений отправлено
+
+WebSocket Metrics
+Active WS connections	сколько клиентов онлайн
+WS connection open/close rate	частота подключения/отключения
+WS messages per second	реальная нагрузка по сообщениям
+WS error events	сбои при обмене
+WS avg latency (опционально)	время доставки сообщений
+хорошие метрики
+
+Messaging Broker / Queue Metrics
+здесь можно добавить 1-2 графика или таблиц
+
+
+Database Metrics
+тут важно использовать метрики которые будут полезны именно для моего приложения.
+https://grafana.com/grafana/dashboards/20867-mongodb-dashboard/
+https://grafana.com/grafana/dashboards/1530-mongodb-monitoring-dashboard/
+https://grafana.com/grafana/dashboards/12079-mongodb/
+https://grafana.com/grafana/dashboards/9628-postgresql-database/
+это примеры dashboard с сайта.
