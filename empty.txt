@@ -1,41 +1,32 @@
-смотри, я видел https://github.com/rfmoz/grafana-dashboards.git Node exporter full. https://grafana.com/grafana/dashboards/1860-node-exporter-full/
-его можно взять как инфраструктурные метрики.
-его графики и метрики хорошие.
-так же можно сделать как в https://grafana.com/grafana/dashboards/19372-dashboard-monitoring-all-server-overview/.
+02 Application Overview очень хорошо сделан.
+когда на сайте делаешь какие то действие, то показывается на dashboard-ах.
+но вот мне кажется сама система исчесления не подходит.
 
-теперь определимся с сервисными метриками
-A) HTTP API
-Метрика	Зачем
-Requests per Second (RPS)	сколько запросов обрабатываются в секунду
-Error Rate (4xx/5xx)	сколько ошибок происходит (важно и 400 и 500 ошибки должны быть).
-Latency P95/P99	“плохие” задержки в системе
-Top N slowest paths	какие пути тормозят чаще всего
-Traffic by path	где сосредоточена нагрузка
-Requests by method	GET vs POST vs others
-я так понимаю это нужно в каждый микросервис внедрить. или только в gateway?
+вот например в таблице 4xx rate by service 0.0187 req/s
+это как будто бы не совсем понятно сколько запросов, неплохо было бы хоть где то писать сколько именно было ошибо или запросов тех или иных.
 
-Business-oriented HTTP KPIs
-эти метрики тоже нужные
-Successful logins/min	сколько логинов в минуту
-Friend requests / min	количество friend-request
-Messages created / min	сколько сообщений отправлено
+а в p99 latency by service и в p95 latency by service на скриншоте видно что это не график, а какие то маленькие точки и не совсем понятно.
+как будто бы можно сделать что то более понятное.
 
-WebSocket Metrics
-Active WS connections	сколько клиентов онлайн
-WS connection open/close rate	частота подключения/отключения
-WS messages per second	реальная нагрузка по сообщениям
-WS error events	сбои при обмене
-WS avg latency (опционально)	время доставки сообщений
-хорошие метрики
+Top important endpoints (RPS)
+тут в value у всех кроме 1 значение стоит 0 всегда, 0 0 0 0.545 req/s 0 0. не совсем понял что это значит.
 
-Messaging Broker / Queue Metrics
-здесь можно добавить 1-2 графика или таблиц
+в dashboard - https://github.com/AppMetrics/AppMetrics красивое и ПОНЯТНОЕ отслеживание ошибок
+там % ошибок от всех запросов, response time, error rate, распределение ошибок в виде круга, active_request, и многое другое.
+
+нужно доработать, и сделать чтобы было все понятно.
 
 
-Database Metrics
-тут важно использовать метрики которые будут полезны именно для моего приложения.
-https://grafana.com/grafana/dashboards/20867-mongodb-dashboard/
-https://grafana.com/grafana/dashboards/1530-mongodb-monitoring-dashboard/
-https://grafana.com/grafana/dashboards/12079-mongodb/
-https://grafana.com/grafana/dashboards/9628-postgresql-database/
-это примеры dashboard с сайта.
+01 Infrastructure - тут вообще всего 3 значения Host CPU usage Host RAM used Disk usage % и они все ничего не показывают, просто написано No data.
+Я просил сделать как в https://grafana.com/grafana/dashboards/1860-node-exporter-full/ | https://github.com/rfmoz/grafana-dashboards.
+чтобы было много значений отслеживающих.
+это тоже нужно исправить.
+
+03 Business KPI
+почему то у всех написано:
+NO data, и в отличий от 01 Infrastructure тут у каждого стоит слева сверху красный знак !
+где написано:
+bad_dta: invalid parameter "query": 1:39: parse error: unexpected <by> (в Logins/min (success vs failed) и в Chats started/min (success vs failed))
+bad_dta: invalid parameter "query": 1:42: parse error: unexpected <by> (в Friend accepts/min (success vs failed) и в Registers/min (success vs failed))
+bad_dta: invalid parameter "query": 1:43: parse error: unexpected <by> (в Friend requests/min (success vs failed))
+bad_dta: invalid parameter "query": 1:44: parse error: unexpected <by> (в Message deletes/min (if available) и в Messages created/min (chat vs group, success vs failed))
