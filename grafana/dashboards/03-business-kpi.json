@@ -41,7 +41,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(auth_logins_total[$window])) * 60 by (status)",
+          "expr": "sum by (status) (rate(auth_logins_total[$window])) * 60",
           "refId": "A"
         }
       ],
@@ -71,7 +71,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(auth_registers_total[$window])) * 60 by (status)",
+          "expr": "sum by (status) (rate(auth_registers_total[$window])) * 60",
           "refId": "A"
         }
       ],
@@ -101,7 +101,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(friend_requests_total[$window])) * 60 by (status)",
+          "expr": "sum by (status) (rate(friend_requests_total[$window])) * 60",
           "refId": "A"
         }
       ],
@@ -131,7 +131,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(friend_accepts_total[$window])) * 60 by (status)",
+          "expr": "sum by (status) (rate(friend_accepts_total[$window])) * 60",
           "refId": "A"
         }
       ],
@@ -161,7 +161,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(messages_created_total[$window])) * 60 by (scope,status)",
+          "expr": "sum by (scope,status) (rate(messages_created_total[$window])) * 60",
           "refId": "A"
         }
       ],
@@ -191,7 +191,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(chat_starts_total[$window])) * 60 by (status)",
+          "expr": "sum by (status) (rate(chat_starts_total[$window])) * 60",
           "refId": "A"
         }
       ],
@@ -221,7 +221,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(messages_deleted_total[$window])) * 60 by (scope,mode,status)",
+          "expr": "sum by (scope,mode,status) (rate(messages_deleted_total[$window])) * 60",
           "refId": "A"
         }
       ],

@@ -22,7 +22,7 @@
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -41,18 +41,18 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window]))",
+          "expr": "sum(rate(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])) * 60",
           "refId": "A"
         }
       ],
-      "title": "Total RPS (important actions)",
+      "title": "Total requests/min (important actions)",
       "type": "timeseries"
     },
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -74,18 +74,18 @@
       },
       "targets": [
         {
-          "expr": "sum by(service) (rate(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window]))",
+          "expr": "sum by(service) (rate(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])) * 60",
           "refId": "A"
         }
       ],
-      "title": "RPS by service (important actions)",
+      "title": "Requests/min by service (important actions)",
       "type": "timeseries"
     },
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -104,18 +104,24 @@
       },
       "targets": [
         {
-          "expr": "sum by(service) (rate(http_requests_total{service=~\"$service\",status=~\"4..\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window]))",
+          "expr": "sum by(service) (rate(http_requests_total{status=~\"4..\",service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])) * 60",
+          "legendFormat": "4xx {{service}}",
           "refId": "A"
+        },
+        {
+          "expr": "sum by(service) (rate(http_requests_total{status=~\"5..\",service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])) * 60",
+          "legendFormat": "5xx {{service}}",
+          "refId": "B"
         }
       ],
-      "title": "4xx rate by service",
+      "title": "Errors/min by service",
       "type": "timeseries"
     },
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -134,11 +140,17 @@
       },
       "targets": [
         {
-          "expr": "sum by(service) (rate(http_requests_total{service=~\"$service\",status=~\"5..\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window]))",
+          "expr": "100 * sum by(service) (rate(http_requests_total{status=~\"4..\",service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])) / clamp_min(sum by(service) (rate(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])), 1e-9)",
+          "legendFormat": "4xx {{service}}",
           "refId": "A"
+        },
+        {
+          "expr": "100 * sum by(service) (rate(http_requests_total{status=~\"5..\",service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])) / clamp_min(sum by(service) (rate(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])), 1e-9)",
+          "legendFormat": "5xx {{service}}",
+          "refId": "B"
         }
       ],
-      "title": "5xx rate by service",
+      "title": "Error % by service",
       "type": "timeseries"
     },
     {
@@ -157,19 +169,22 @@
       },
       "id": 5,
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "orientation": "horizontal"
       },
       "targets": [
         {
           "expr": "histogram_quantile(0.95, sum by(le,service) (rate(http_request_duration_seconds_bucket{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])))",
-          "refId": "A"
+          "refId": "A",
+          "interval": "30s"
         }
       ],
       "title": "p95 latency by service",
-      "type": "timeseries"
+      "type": "stat"
     },
     {
       "datasource": "Prometheus",
@@ -187,25 +202,28 @@
       },
       "id": 6,
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "orientation": "horizontal"
       },
       "targets": [
         {
           "expr": "histogram_quantile(0.99, sum by(le,service) (rate(http_request_duration_seconds_bucket{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])))",
-          "refId": "A"
+          "refId": "A",
+          "interval": "30s"
         }
       ],
       "title": "p99 latency by service",
-      "type": "timeseries"
+      "type": "stat"
     },
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -221,13 +239,13 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by(path) (rate(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])))",
+          "expr": "topk(10, sum by(path) (increase(http_requests_total{service=~\"$service\",method=~\"POST|DELETE|PUT\",method!=\"OPTIONS\",path!=\"/metrics\",path!=\"/auth/validate\",path!=\"/users/me\",path!=\"/users/:id\",path!=\"/friends\",path!=\"/friends/requests/incoming\",path!=\"/groups\",path!=\"/chats\",path!~\"^/ws/.*\"}[$window])))",
           "format": "table",
           "instant": true,
           "refId": "A"
         }
       ],
-      "title": "Top important endpoints (RPS)",
+      "title": "Top important endpoints (count over window)",
       "type": "table"
     },
     {
@@ -327,9 +345,9 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "5m",
-          "value": "5m"
+          "selected": true,
+          "text": "15m",
+          "value": "15m"
         },
         "label": "Window",
         "name": "window",
@@ -340,12 +358,12 @@
             "value": "1m"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "5m",
             "value": "5m"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "15m",
             "value": "15m"
           }
